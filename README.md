@@ -14,6 +14,9 @@ pnpm dev
 bun dev
 ```
 
+![Calender-Nextjs-App](https://miro.medium.com/v2/resize:fit:828/format:webp/1*NnYShDqQicLzQKodhGz2Cg.png)
+
+
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
