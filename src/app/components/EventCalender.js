@@ -12,8 +12,11 @@ const EventCalendar = ({ initialDate }) => {
   const fetchTasks = useCallback(() => {
     const formattedDate = moment(selectedDate).format("YYYY-MM-DD");
     axios
-      .get(`/api/tasks?date=${formattedDate}`)
+      .get(
+        `https://tame-gold-skunk-tie.cyclic.app/product?date=${formattedDate}`
+      )
       .then((response) => {
+        console.log("response.data", response.data);
         setTasks(response.data);
       })
       .catch((error) => {
@@ -33,15 +36,24 @@ const EventCalendar = ({ initialDate }) => {
     setTasks(updatedTasks);
   };
 
-  const handleAddTask = () => {
+  const handleAddTask = async () => {
     if (!newTask || !selectedDate) return;
     const taskData = {
       title: newTask,
       date: selectedDate,
     };
-    axios
-      .post("/api/tasks", taskData)
-      .then(() => {
+
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ taskData }),
+    };
+
+    console.log("taskData", taskData);
+    await fetch("https://tame-gold-skunk-tie.cyclic.app/product", requestOptions)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("data", data);
         setNewTask("");
         setIsModalOpen(false);
         fetchTasks();
@@ -53,7 +65,9 @@ const EventCalendar = ({ initialDate }) => {
 
   const handleDeleteTask = (taskId) => {
     axios
-      .delete("/api/tasks", { data: { id: taskId } })
+      .delete("https://tame-gold-skunk-tie.cyclic.app/product", {
+        data: { id: taskId },
+      })
       .then(() => {
         const updatedTasks = { ...tasks };
         updatedTasks[selectedDate] = updatedTasks[selectedDate].filter(
