@@ -10,10 +10,12 @@ const EventCalendar = ({ initialDate }) => {
   const [tasks, setTasks] = useState([]);
 
   const fetchTasks = useCallback(() => {
-    const formattedDate = moment(selectedDate).format("YYYY-MM-DD");
+    const startDate = moment(selectedDate).startOf("week");
+    const endDate = moment(selectedDate).endOf("week");
+
     axios
       .get(
-        `https://next-js-calender-api.cyclic.app/product?date=${formattedDate}`
+        `https://next-js-calender-api.cyclic.app/product?startDate=${startDate}&endDate=${endDate}`
       )
       .then((response) => {
         console.log("response.data", response.data);
@@ -128,7 +130,7 @@ const EventCalendar = ({ initialDate }) => {
               Add Task
             </button>
 
-            {tasks.length > 0 ? (
+            {tasks.some((task) => moment(task.date).isSame(day, "day")) && (
               <ul className="border rounded p-2">
                 {tasks
                   .filter((task) => moment(task.date).isSame(day, "day"))
@@ -165,8 +167,6 @@ const EventCalendar = ({ initialDate }) => {
                     </li>
                   ))}
               </ul>
-            ) : (
-              <p>No tasks for this date</p>
             )}
           </div>
         ))}
@@ -180,7 +180,7 @@ const EventCalendar = ({ initialDate }) => {
               value={newTask}
               onChange={(e) => setNewTask(e.target.value)}
               placeholder="Enter task"
-              className="border px-2 py-1 mb-2 text-green-500 font-bold"
+              className="border px-2 py-1 mb-2 text-green-600"
             />
             <button
               onClick={handleAddTask}
