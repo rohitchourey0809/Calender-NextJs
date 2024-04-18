@@ -7,7 +7,7 @@ const EventCalendar = ({ initialDate }) => {
   const [selectedDate, setSelectedDate] = useState(initialDate);
   const [newTask, setNewTask] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [tasks, setTasks] = useState({});
+  const [tasks, setTasks] = useState([]);
 
   const fetchTasks = useCallback(() => {
     const formattedDate = moment(selectedDate).format("YYYY-MM-DD");
@@ -29,8 +29,7 @@ const EventCalendar = ({ initialDate }) => {
   }, [fetchTasks]);
 
   const toggleTaskCompletion = (taskId) => {
-    const updatedTasks = { ...tasks };
-    updatedTasks[selectedDate] = updatedTasks[selectedDate].map((task) =>
+    const updatedTasks = tasks.map((task) =>
       task.id === taskId ? { ...task, completed: !task.completed } : task
     );
     setTasks(updatedTasks);
@@ -38,41 +37,37 @@ const EventCalendar = ({ initialDate }) => {
 
   const handleAddTask = async () => {
     if (!newTask || !selectedDate) return;
+
     const taskData = {
       title: newTask,
       date: selectedDate,
     };
 
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ taskData }),
-    };
+    try {
+      const response = await axios.post(
+        "https://tame-gold-skunk-tie.cyclic.app/product",
+        taskData
+      );
+      const addedTask = response.data;
 
-    console.log("taskData", taskData);
-    await fetch("https://tame-gold-skunk-tie.cyclic.app/product", requestOptions)
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("data", data);
-        setNewTask("");
-        setIsModalOpen(false);
-        fetchTasks();
-      })
-      .catch((error) => {
-        console.error("Error adding task:", error);
-      });
+      if (moment(addedTask.date).isSame(selectedDate, "day")) {
+        setTasks([...tasks, addedTask]);
+      }
+
+      setNewTask("");
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("Error adding task:", error);
+    }
   };
 
   const handleDeleteTask = (taskId) => {
+    console.log("taskId", taskId);
     axios
-      .delete("https://tame-gold-skunk-tie.cyclic.app/product", {
-        data: { id: taskId },
-      })
+      .delete(`https://tame-gold-skunk-tie.cyclic.app/product/${taskId}`)
       .then(() => {
-        const updatedTasks = { ...tasks };
-        updatedTasks[selectedDate] = updatedTasks[selectedDate].filter(
-          (task) => task.id !== taskId
-        );
+        const updatedTasks = tasks.filter((task) => task.id !== taskId);
+        console.log("updatedTasks", updatedTasks);
         setTasks(updatedTasks);
       })
       .catch((error) => {
@@ -94,6 +89,9 @@ const EventCalendar = ({ initialDate }) => {
   for (let i = 0; i < 7; i++) {
     currentWeek.push(startDate.clone().add(i, "days"));
   }
+
+  console.log("tasks[selectedDate]", tasks);
+  console.log("selectedDate", selectedDate);
 
   return (
     <div className="flex flex-col items-center gap-4">
@@ -130,9 +128,9 @@ const EventCalendar = ({ initialDate }) => {
               Add Task
             </button>
 
-            {tasks[selectedDate] && tasks[selectedDate].length > 0 ? (
+            {tasks.length > 0 ? (
               <ul className="border rounded p-2">
-                {tasks[selectedDate]
+                {tasks
                   .filter((task) => moment(task.date).isSame(day, "day"))
                   .map((task) => (
                     <li
@@ -167,7 +165,9 @@ const EventCalendar = ({ initialDate }) => {
                     </li>
                   ))}
               </ul>
-            ) : null}
+            ) : (
+              <p>No tasks for this date</p>
+            )}
           </div>
         ))}
       </div>
