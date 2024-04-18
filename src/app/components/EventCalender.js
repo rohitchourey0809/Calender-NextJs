@@ -180,7 +180,7 @@ const EventCalendar = ({ initialDate }) => {
               value={newTask}
               onChange={(e) => setNewTask(e.target.value)}
               placeholder="Enter task"
-              className="border px-2 py-1 mb-2"
+              className="border px-2 py-1 mb-2 text-green-500 font-bold"
             />
             <button
               onClick={handleAddTask}
