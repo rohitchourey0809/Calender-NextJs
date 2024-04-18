@@ -13,7 +13,7 @@ const EventCalendar = ({ initialDate }) => {
     const formattedDate = moment(selectedDate).format("YYYY-MM-DD");
     axios
       .get(
-        `https://tame-gold-skunk-tie.cyclic.app/product?date=${formattedDate}`
+        `https://next-js-calender-api.cyclic.app/product?date=${formattedDate}`
       )
       .then((response) => {
         console.log("response.data", response.data);
@@ -45,7 +45,7 @@ const EventCalendar = ({ initialDate }) => {
 
     try {
       const response = await axios.post(
-        "https://tame-gold-skunk-tie.cyclic.app/product",
+        "https://next-js-calender-api.cyclic.app/product",
         taskData
       );
       const addedTask = response.data;
@@ -64,7 +64,7 @@ const EventCalendar = ({ initialDate }) => {
   const handleDeleteTask = (taskId) => {
     console.log("taskId", taskId);
     axios
-      .delete(`https://tame-gold-skunk-tie.cyclic.app/product/${taskId}`)
+      .delete(`https://next-js-calender-api.cyclic.app/product/${taskId}`)
       .then(() => {
         const updatedTasks = tasks.filter((task) => task.id !== taskId);
         console.log("updatedTasks", updatedTasks);
