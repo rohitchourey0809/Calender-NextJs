@@ -14,8 +14,9 @@ pnpm dev
 bun dev
 ```
 
-![Calender-Nextjs-App](https://miro.medium.com/v2/resize:fit:828/format:webp/1*NnYShDqQicLzQKodhGz2Cg.png)
+Click here to watch the video
 
+[![Calender-Nextjs-App Watch the video](https://miro.medium.com/v2/resize:fit:828/format:webp/1*NnYShDqQicLzQKodhGz2Cg.png)](https://www.canva.com/design/DAGC1KFAQng/rdYgwnrsUFaIQVTGfbYHGQ/watch)
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
