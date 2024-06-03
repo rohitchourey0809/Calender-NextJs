@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import moment from "moment";
 import axios from "axios";
 import { CheckIcon } from "@heroicons/react/outline";
+import { baseapi } from "../api";
 
 const EventCalendar = ({ initialDate }) => {
   const [selectedDate, setSelectedDate] = useState(initialDate);
@@ -14,9 +15,7 @@ const EventCalendar = ({ initialDate }) => {
     const endDate = moment(selectedDate).endOf("week");
 
     axios
-      .get(
-        `https://next-js-calender-api.cyclic.app/product?startDate=${startDate}&endDate=${endDate}`
-      )
+      .get(`${baseapi}/tasks?startDate=${startDate}&endDate=${endDate}`)
       .then((response) => {
         console.log("response.data", response.data);
         setTasks(response.data);
@@ -32,7 +31,7 @@ const EventCalendar = ({ initialDate }) => {
 
   const toggleTaskCompletion = (taskId) => {
     const updatedTasks = tasks.map((task) =>
-      task.id === taskId ? { ...task, completed: !task.completed } : task
+      task._id === taskId ? { ...task, completed: !task.completed } : task
     );
     setTasks(updatedTasks);
   };
@@ -46,10 +45,7 @@ const EventCalendar = ({ initialDate }) => {
     };
 
     try {
-      const response = await axios.post(
-        "https://next-js-calender-api.cyclic.app/product",
-        taskData
-      );
+      const response = await axios.post(`${baseapi}/tasks`, taskData);
       const addedTask = response.data;
 
       if (moment(addedTask.date).isSame(selectedDate, "day")) {
@@ -66,9 +62,9 @@ const EventCalendar = ({ initialDate }) => {
   const handleDeleteTask = (taskId) => {
     console.log("taskId", taskId);
     axios
-      .delete(`https://next-js-calender-api.cyclic.app/product/${taskId}`)
+      .delete(`${baseapi}/tasks/${taskId}`)
       .then(() => {
-        const updatedTasks = tasks.filter((task) => task.id !== taskId);
+        const updatedTasks = tasks.filter((task) => task._id !== taskId);
         console.log("updatedTasks", updatedTasks);
         setTasks(updatedTasks);
       })
@@ -136,7 +132,7 @@ const EventCalendar = ({ initialDate }) => {
                   .filter((task) => moment(task.date).isSame(day, "day"))
                   .map((task) => (
                     <li
-                      key={task.id}
+                      key={task._id}
                       className="flex justify-between items-center mb-1"
                     >
                       <button
@@ -159,7 +155,7 @@ const EventCalendar = ({ initialDate }) => {
                         {task.title}
                       </span>
                       <button
-                        onClick={() => handleDeleteTask(task.id)}
+                        onClick={() => handleDeleteTask(task._id)}
                         className="text-red-500 bg-transparent border border-solid border-red-500 rounded px-3 py-1 transition duration-300 ease-in-out hover:bg-red-500 hover:text-white"
                       >
                         Delete
