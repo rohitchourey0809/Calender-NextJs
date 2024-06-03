@@ -3,6 +3,7 @@ import moment from "moment";
 import axios from "axios";
 import { CheckIcon } from "@heroicons/react/outline";
 import { baseapi } from "../api";
+import { toast } from "react-toastify";
 
 const EventCalendar = ({ initialDate }) => {
   const [selectedDate, setSelectedDate] = useState(initialDate);
@@ -17,6 +18,7 @@ const EventCalendar = ({ initialDate }) => {
     axios
       .get(`${baseapi}/tasks?startDate=${startDate}&endDate=${endDate}`)
       .then((response) => {
+        toast.success("Successfully get data");
         console.log("response.data", response.data);
         setTasks(response.data);
       })
@@ -46,6 +48,7 @@ const EventCalendar = ({ initialDate }) => {
 
     try {
       const response = await axios.post(`${baseapi}/tasks`, taskData);
+      toast.success("Data Added Succesfully");
       const addedTask = response.data;
 
       if (moment(addedTask.date).isSame(selectedDate, "day")) {
@@ -65,6 +68,7 @@ const EventCalendar = ({ initialDate }) => {
       .delete(`${baseapi}/tasks/${taskId}`)
       .then(() => {
         const updatedTasks = tasks.filter((task) => task._id !== taskId);
+        toast.success("Data Deleted Succesfully");
         console.log("updatedTasks", updatedTasks);
         setTasks(updatedTasks);
       })
